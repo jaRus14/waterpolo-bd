@@ -1,14 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package app;
 import model.*;
 /**
  *
- * @author victor
+ * @author FJRUS
  */
+
 public class EquipoJDialog extends javax.swing.JDialog {
 
     public static int ACCION_CANCELAR = -1;
@@ -41,6 +37,7 @@ public class EquipoJDialog extends javax.swing.JDialog {
     // Constructor modificado para ser siempre modal, y aceptar un equipo como
     // parámetro
     public EquipoJDialog(java.awt.Frame parent, Equipo equipo) {
+       
         super(parent, true);
         initComponents();
         this.setLocationRelativeTo(parent);
@@ -62,12 +59,12 @@ public class EquipoJDialog extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jTextFieldNombre = new javax.swing.JTextField();
         jTextFieldCiudad = new javax.swing.JTextField();
         jTextFieldPais = new javax.swing.JTextField();
         jLabelId = new javax.swing.JLabel();
         jButtonGuardar = new javax.swing.JButton();
         jButtonCerrar = new javax.swing.JButton();
+        jTextFieldNombre = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -154,11 +151,15 @@ public class EquipoJDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGuardarActionPerformed
-        boolean exito;
+        
+        boolean todoOk;
+        equipo.setNombre(jTextFieldNombre.getText());
+        equipo.setCiudad(jTextFieldCiudad.getText());
+        equipo.setPais(jTextFieldPais.getText());
         if (equipo.getId() < 1) {
-           exito = equipo.create();
+           todoOk = equipo.create();
         } else {
-           exito = equipo.update();
+           todoOk = equipo.update();
         }
         this.accion = ACCION_GUARDAR;
         this.setVisible(false);

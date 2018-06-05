@@ -110,8 +110,6 @@
         <Property name="text" type="java.lang.String" value="Pa&#xed;s:"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="jTextFieldNombre">
-    </Component>
     <Component class="javax.swing.JTextField" name="jTextFieldCiudad">
     </Component>
     <Component class="javax.swing.JTextField" name="jTextFieldPais">
@@ -136,6 +134,8 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonCerrarActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JTextField" name="jTextFieldNombre">
     </Component>
   </SubComponents>
 </Form>

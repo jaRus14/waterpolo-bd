@@ -1,25 +1,22 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package app;
 
-import static app.EquipoJDialog.ACCION_CANCELAR;
 import model.*;
+import java.util.*;
 
 /**
  *
- * @author victor
+ * @author FJRUS
  */
-public class JugadorJDialog extends javax.swing.JDialog {
 
+public class JugadorJDialog extends javax.swing.JDialog {
     private Jugador jugador;
     private int accion;
 
     public static int ACCION_CANCELAR = -1;
     public static int ACCION_GUARDAR = 0;
 
+    private List<Equipo> nombresEquipos = Equipo.obtenerEquipos("", 0);
+    
     public Jugador getJugador() {
         return jugador;
     }
@@ -29,10 +26,16 @@ public class JugadorJDialog extends javax.swing.JDialog {
     }
     
     public void actualizar() {
-        // POR HACER;
+         for(Equipo z : nombresEquipos){
+            jComboBox1.addItem(z.getNombre() + "-" + z.getCiudad() + " " 
+                    + "(" + z.getPais() + ")");
+        }
         
-    }
-
+        jLabelId.setText(String.valueOf(jugador.getId()));
+        jTextFieldNombre.setText(jugador.getNombre());
+        jTextFieldApellidos.setText(jugador.getApellidos());
+        
+}
     /**
      * Creates new form JugadorJDialog
      */
@@ -151,11 +154,36 @@ public class JugadorJDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGuardarActionPerformed
-        // POR HACER
+        
+        boolean todoOk;
+        Equipo e = new Equipo();
+        if (jugador.getId() < 1) {
+            jugador.setApellidos(jTextFieldApellidos.getText().toLowerCase());
+            jugador.setNombre(jTextFieldNombre.getText().toLowerCase());
+            
+            
+            Equipo unEquipo = nombresEquipos.get(jComboBox1.getSelectedIndex());
+            int idEquipo = unEquipo.getId();
+            jugador.setIdEquipo(idEquipo);
+
+            todoOk = jugador.create();
+        } else {
+            jugador.setApellidos(jTextFieldApellidos.getText().toLowerCase());
+            jugador.setNombre(jTextFieldNombre.getText().toLowerCase());
+            
+            
+            Equipo unEquipo = nombresEquipos.get(jComboBox1.getSelectedIndex());
+            int idEquipo = unEquipo.getId();
+            jugador.setIdEquipo(idEquipo);
+            
+            todoOk = jugador.update();
+}
+        this.accion = ACCION_GUARDAR;
+        this.setVisible(false);
     }//GEN-LAST:event_jButtonGuardarActionPerformed
 
     private void jButtonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelarActionPerformed
-        // POR HACER
+         this.setVisible(false);
     }//GEN-LAST:event_jButtonCancelarActionPerformed
 
 

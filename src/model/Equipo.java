@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package model;
 
 import java.util.*;
@@ -10,8 +5,9 @@ import java.sql.*;
 
 /**
  *
- * @author victor
+ * @author FJRUS
  */
+
 public class Equipo {
 
     public static int ORDEN_NOMBRE = 0;
@@ -75,13 +71,26 @@ public class Equipo {
 
     // ---------- CRUD BÁSICO
     public boolean create() {
+        
+        boolean todoOk = true;
+        try (Connection conn = ConexionBd.obtener()) 
+        {
+            PreparedStatement stmt = conn.prepareStatement("INSERT INTO equipo (nombre,ciudad,pais) VALUES (?,?,?)");
+            stmt.setString(1, getNombre());
+            stmt.setString(2, getCiudad());
+            stmt.setString(3, getPais());
+            
+            stmt.executeUpdate();
 
-        return true;
+        } catch (SQLException ex) {
+            todoOk = false;
+          }
+        return todoOk;
     }
 
     public boolean retrieve() {
-        // POR HACER
-        setId(33);
+        
+        setId(3-3);
         setNombre("Equipo ejemplo");
         setCiudad("Ciudad ejemplo");
         setPais("Pais ejemplo");
@@ -89,19 +98,57 @@ public class Equipo {
     }
 
     public boolean update() {
-        return true;
+        
+        boolean todoOk = true;
+        try (Connection conn = ConexionBd.obtener()) 
+        {
+            try (PreparedStatement stmt = conn.prepareStatement("UPDATE equipo SET nombre = ?, "
+                    + "ciudad = ?, pais = ? where id = ?")) {
+                stmt.setString(1, getNombre());
+                stmt.setString(2, getCiudad());
+                stmt.setString(3, getPais());
+                stmt.setInt(4, getId());
+                stmt.executeUpdate();
+            }
+        } catch (SQLException ex) {
+           todoOk = false;
+          }
+        return todoOk;       
     }
 
     public boolean delete() {
-        return true;
+        
+        boolean todoOk = true;
+        try (Connection conn = ConexionBd.obtener()) 
+        {
+            try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM equipo WHERE id = ?")) {
+                stmt.setInt(1, getId());
+                stmt.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            todoOk = false;
+          }
+        return todoOk;
     }
 
     // ----------- Otras, de instancia, relacionadas con la fk
     public List<Jugador> getJugadores() {
-        // POR HACER.
+        
         List<Jugador> resultado = new ArrayList<>();
-        resultado.add(new Jugador(1, "Paco", "López", 19));
-        resultado.add(new Jugador(2, "Luisa", "Martínez", 21));
+        
+        try (Connection conn = ConexionBd.obtener()) 
+        {
+            PreparedStatement stmt = conn.prepareStatement("SELECT nombre ,apellidos ,edad FROM jugador where idequipo = ?");
+            stmt.setInt(1, getId());
+            try (ResultSet rs = stmt.executeQuery()) 
+            {
+                while (rs.next()) {
+                    resultado.add(new Jugador(rs.getString(1), rs.getString(2), rs.getInt(3)));
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+          }
         return resultado;
     }
 
@@ -114,14 +161,43 @@ public class Equipo {
 
         // Si la búsqueda es una cadena vacía lanzamos una select sin WHERE
         // y si tiene algo con WHERE y varios LIKEs
-        // POR HACER
+       
         List<Equipo> resultado = new ArrayList<>();
-        resultado.add(
-                new Equipo(1, "Halcones calvos", "Getafe", "España"));
-        resultado.add(
-                new Equipo(2, "Dumma den som läser den", "Visby", "Suecia"));
+        String sql;
+        
+        if (busqueda.equals("")) {
+            sql = "SELECT id, nombre ,ciudad ,pais FROM equipo";
+        } else {
+            sql = "SELECT id, nombre ,ciudad ,pais FROM equipo WHERE nombre LIKE lower(?) OR ciudad LIKE lower(?)"
+                    + "OR pais LIKE lower(?)";
+        }
+        //Ordenar nombres
+        if (orden == ORDEN_NOMBRE) {
+            sql = sql + " ORDER BY nombre";
+        }else {
+            sql = sql + " ORDER BY pais";
+        }
+
+        try (Connection conn = ConexionBd.obtener()) 
+        {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            if (!busqueda.equals("")) {
+                stmt.setString(1, '%' + busqueda + '%');
+                stmt.setString(2, '%' + busqueda + '%');
+                stmt.setString(3, '%' + busqueda + '%');
+            }
+            try (ResultSet rs = stmt.executeQuery()) 
+            {
+                while (rs.next()) {
+                    resultado.add(new Equipo(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4)));
+                }
+            }
+        }catch (SQLException ex) {
+            ex.printStackTrace();
+        }
         return resultado;
-
     }
-
 }
+     
+
+
